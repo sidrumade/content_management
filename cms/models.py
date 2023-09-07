@@ -13,4 +13,28 @@ class Author(models.Model):
     city = models.CharField(max_length=50,null=True)
     state = models.CharField(max_length=50,null=True)
     country = models.CharField(max_length=50,null=True)
-    pincode = models.IntegerField(null=False, validators=[MinLengthValidator(6), MaxLengthValidator(6)])
+    pincode = models.IntegerField(null=False)
+
+    def __str__(self):
+        return self.fullname
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=30, unique=True)  # Add other fields as needed
+
+    def __str__(self):
+        return self.name
+
+
+class Content(models.Model):
+    title = models.CharField(max_length=30,null=False)
+    body = models.CharField(max_length=300,null=False)
+    summary = models.CharField(max_length=60,null=False)
+    categories = models.ManyToManyField(Category)  # Many-to-many relationship
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)  # ForeignKey relationship
+
+
+    def __str__(self):
+        return self.title
+
+
