@@ -10,7 +10,9 @@ from django.http import JsonResponse
 
 from rest_framework import viewsets
 from .models import Author
-from .serializers import AuthorSerializer
+from .serializers import AuthorSerializer,CategorySerializer,ContentSerializer
+from .models import Author,Content,Category
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -39,3 +41,18 @@ def create_author(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    
+
+
+class ContentViewSet(viewsets.ModelViewSet):
+    queryset = Content.objects.all()
+    serializer_class = ContentSerializer
+
+    # Only allow the content owner to change the content
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)

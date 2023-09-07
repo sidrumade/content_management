@@ -1,6 +1,6 @@
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from django.core.validators import MinLengthValidator
-from .models import Author,Content
+from .models import Author,Content,Category
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,3 +29,11 @@ class ContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Content
         fields = ['title', 'body', 'summary', 'categories', 'author', 'pdf']
+        
+
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
+        
