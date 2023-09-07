@@ -32,6 +32,8 @@ class Content(models.Model):
     summary = models.CharField(max_length=60,null=False)
     categories = models.ManyToManyField(Category)  # Many-to-many relationship
     author = models.ForeignKey(Author, on_delete=models.CASCADE)  # ForeignKey relationship
+    pdf = models.FileField(upload_to='pdfs',null=False)
+
 
 
     def __str__(self):

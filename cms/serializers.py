@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.core.validators import MinLengthValidator
-from .models import Author
+from .models import Author,Content
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,3 +21,11 @@ class AuthorSerializer(serializers.ModelSerializer):
         if value is None or value < 100000 or value > 999999:
             raise serializers.ValidationError('Pincode must be exactly 6 characters long')
         return value
+
+
+class ContentSerializer(serializers.ModelSerializer):
+    pdf = serializers.FileField(required=True)
+
+    class Meta:
+        model = Content
+        fields = ['title', 'body', 'summary', 'categories', 'author', 'pdf']
