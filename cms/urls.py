@@ -1,10 +1,13 @@
 from rest_framework.authtoken import views as rest_view
-from django.urls import path,include
+from django.urls import path
 from .views import home,get_username,create_author
 from .views import ContentViewSet, CategoryViewSet
-from .serializers import ContentSerializer, CategorySerializer
+from rest_framework.routers import DefaultRouter
 
 
+router = DefaultRouter()
+router.register(r'content', ContentViewSet, basename='content')
+router.register(r'category', CategoryViewSet, basename='category')
 
 app_name = 'cms'
 
