@@ -1,17 +1,14 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status , viewsets
 
-import json
-from django.http import JsonResponse
-
-from rest_framework import viewsets
-from .models import Author
 from .serializers import AuthorSerializer,CategorySerializer,ContentSerializer
-from .models import Author,Content,Category
+from .models import Content,Category
+from .permissions import IsAuthorOrAdmin
 
 
 @api_view(['GET'])
@@ -52,7 +49,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ContentViewSet(viewsets.ModelViewSet):
     queryset = Content.objects.all()
     serializer_class = ContentSerializer
+    permission_classes = [IsAuthorOrAdmin]       # Only allow the content owner to change the content
 
-    # Only allow the content owner to change the content
+
     def perform_update(self, serializer):
         serializer.save(author=self.request.user)
+        
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Content.objects.all()  #list all objects
+        return Content.objects.filter(author=self.request.user)  # list only perticular authors object
