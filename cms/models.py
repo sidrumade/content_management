@@ -1,7 +1,8 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.core.validators import MinLengthValidator, MaxLengthValidator
-from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
+import re
+
 
 ##Author model
 class Author(models.Model):
@@ -14,6 +15,23 @@ class Author(models.Model):
     state = models.CharField(max_length=50,null=True)
     country = models.CharField(max_length=50,null=True)
     pincode = models.IntegerField(null=False)
+    
+    def validate_password(self):
+        if len(self.password) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        if not re.search(r'[A-Z]', self.password):
+            raise ValueError('Password must contain at least one uppercase letter')
+        if not re.search(r'[a-z]', self.password):
+            raise ValueError('Password must contain at least one lowercase letter')
+
+
+    def save(self, *args, **kwargs):
+        self.validate_password()
+        if len(str(self.phone)) < 10:
+            raise ValueError('Phone number must be at least 10 characters long')
+        if not (100000 <= self.pincode <= 999999):
+            raise ValueError('Pincode must be exactly 6 characters long')
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.fullname
